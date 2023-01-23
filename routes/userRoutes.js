@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userAuth = require("../middlewares/userAuthMiddleware");
-const {userAccess} = require('../service/userAccessService')
+const { userAccess } = require("../service/userAccessService");
 const {
   register,
   registerOTP,
@@ -12,8 +12,7 @@ const {
   getUser,
   userSearch,
   loginAuth,
-  googleRegister,
-  googleLogin,
+ 
   addCoverImage,
   addProfileImg,
   allUsers,
@@ -23,20 +22,18 @@ const {
   userProfile,
   working,
   checkOldPassword,
-  editPassword
+  editPassword,
 } = require("../controllers/userController");
 
-router.get('/working', working)
-router.get('/userAccessCheck',userAccess )
+router.get("/working", working);
+router.get("/userAccessCheck", userAccess);
 router.post("/login", loginUser);
-router.post('/email/forgotPassword', forgotPasswordEmail)
-router.patch('/password/forgotPassword', forgotPassword)
+router.post("/email/forgotPassword", forgotPasswordEmail);
+router.patch("/password/forgotPassword", forgotPassword);
 router.post("/register", register);
-router.post('/register/otp', registerOTP);
-router.post('/otp/resent', resentOtp)
-router.post("/googleLogin", googleLogin);
-router.post("/googleRegister", googleRegister);
-router.get("/loginAuth", userAuth,loginAuth);
+router.post("/register/otp", registerOTP);
+router.post("/otp/resent", resentOtp);
+router.get("/loginAuth", userAuth, loginAuth);
 router.get("/userSearch/:data", userSearch);
 router.post("/addCoverImg", userAuth, addCoverImage);
 router.post("/addProfileImg", userAuth, addProfileImg);
@@ -46,7 +43,7 @@ router.post("/addFollow", userAuth, addFollow);
 router.post("/follwers/remove", userAuth, removeFollowers);
 router.put("/user/update", updateUser);
 router.get("/user/profile/:id", userProfile);
-router.patch('/oldPassword/:id', checkOldPassword );
-router.patch('/password/editPassword/:id', editPassword)
+router.patch("/oldPassword/:id", checkOldPassword);
+router.patch("/password/editPassword/:id", editPassword);
 
 module.exports = router;
