@@ -14,8 +14,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-   origin: "https://instantse.netlify.app",
-  //  origin: 'http://localhost:3000',
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
   },
 });
@@ -26,22 +25,20 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(
-  cors()
-);
+app.use(cors());
 
 io.on("connection", (socket) => {
   console.log("Connected socket", socket.id);
 
   socket.on("join_room", (data) => {
     socket.join(data);
-    console.log(`User with id: ${socket.id} Joined with room: ${data}`)
+    console.log(`User with id: ${socket.id} Joined with room: ${data}`);
   });
 
   socket.on("send_message", (data) => {
-    console.log(data)
-      socket.to(data.room).emit("recieve_message", data)
-  })
+    console.log(data);
+    socket.to(data.room).emit("recieve_message", data);
+  });
 
   socket.on("disconnect", () => {
     console.log("User Disconnected", socket.id);
@@ -50,8 +47,8 @@ io.on("connection", (socket) => {
 
 app.use("/", require("./routes/userRoutes"));
 app.use("/posts", require("./routes/postRouter"));
-app.use('/chat',require('./routes/chatRouter'));
-app.use('/admin', require('./routes/adminRouter'))
+app.use("/chat", require("./routes/chatRouter"));
+app.use("/admin", require("./routes/adminRouter"));
 
 app.use(errorHandler);
 server.listen(port, () =>
