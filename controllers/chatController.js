@@ -21,7 +21,6 @@ module.exports = {
         saveMessage.save();
         res.json(saveMessage);
       } else {
-        console.log("room already created");
         res.json(checkRoom);
       }
     } catch (error) {
@@ -94,7 +93,7 @@ module.exports = {
   getChat: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.user._id);
-      console.log(userId);
+
       const chat = await messageModel
         .find({
           users: { $in: [userId] },
@@ -102,7 +101,6 @@ module.exports = {
         .populate("users");
       res.status(200).json(chat);
     } catch (error) {
-      console.log("error", error);
       res.status(500).json(error);
     }
   }),
