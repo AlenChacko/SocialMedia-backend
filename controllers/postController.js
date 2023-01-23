@@ -6,12 +6,12 @@ const mongoose = require("mongoose");
 const reportPostModel = require("../models/reportPostModel");
 
 module.exports = {
-  ///add post
+  //Add posts
   addPost: asyncHandler(async (req, res) => {
     try {
       const { image, description } = req.body;
-      const userId = req.user._id; 
-       if (!userId) {
+      const userId = req.user._id;
+      if (!userId) {
         res.json({ message: "unauthorized" });
         throw new Error("Un authorized");
       } else {
@@ -28,14 +28,12 @@ module.exports = {
         res.status(200).json(addedPost);
       }
     } catch (error) {
-      console.log(error);
       res.status(500).json({ messsage: "error found" });
     }
   }),
 
-  ///get post
+  //Get post
   getPost: asyncHandler(async (req, res) => {
-    console.log(req.user);
     try {
       const id = req.user._id;
       const userId = mongoose.Types.ObjectId(id);
@@ -56,12 +54,10 @@ module.exports = {
           throw new Error("No posts found");
         }
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }),
 
-  ///like post
+  //Like post
   postLike: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.body.userid);
@@ -70,7 +66,7 @@ module.exports = {
         _id: postid,
         likes: [userId],
       });
-      console.log(likedUser, "userlike");
+
       if (likedUser) {
         const unlike = await postModel
           .findOneAndUpdate(
@@ -93,12 +89,11 @@ module.exports = {
         res.status(200).json({ liked, message: "liked" });
       }
     } catch (error) {
-      console.log(error);
       res.status(500).json({ messsage: "error found" });
     }
   }),
 
-  ///get likes
+  //Get likes
   getLikes: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.user._id);
@@ -107,12 +102,11 @@ module.exports = {
       const totalLikes = likes.likes.length;
       res.status(200).json(totalLikes);
     } catch (error) {
-      console.log(error);
       res.status(500).json({ messsage: "error found" });
     }
   }),
 
-  ///add comment
+  //Add comment
   addComment: asyncHandler(async (req, res) => {
     try {
       const comment = req.body.values.comment;
@@ -138,12 +132,11 @@ module.exports = {
         res.status(200).json(postComment);
       }
     } catch (error) {
-      console.log(error);
       res.status(500).json({ messsage: "error found" });
     }
   }),
 
-  ///delete comment
+  //Delete comment
   deleteComment: asyncHandler(async (req, res) => {
     try {
       const postId = mongoose.Types.ObjectId(req.body.postId);
@@ -154,12 +147,11 @@ module.exports = {
       );
       res.status(200).json({ message: "Comment Deleted" });
     } catch (error) {
-      console.log("error", error);
       res.status(500).json({ message: "Error found", error });
     }
   }),
 
-  ///get user posts
+  //Get user posts
   getUserPost: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.params.id);
@@ -170,12 +162,11 @@ module.exports = {
         .sort({ createdAt: -1 });
       res.status(200).json(userPosts);
     } catch (error) {
-      console.log("error", error);
       res.status(500).json({ message: "error found" });
     }
   }),
 
-  ///get following peoples posts
+  //Get following peoples posts
   getAllPosts: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.user._id);
@@ -187,12 +178,11 @@ module.exports = {
       // const user = await userModel.findOne({ _id: userId });
       res.status(200).json({ allPosts, message: "Post deleted" });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ messsage: "error found" });
     }
   }),
 
-  ///delete post
+  //Delete post
   deletePost: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.body.userId);
@@ -207,12 +197,11 @@ module.exports = {
       );
       res.status(200).json(post);
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "error found" });
     }
   }),
 
-  ///save post
+  //Save post
   savePost: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.body.userId);
@@ -241,12 +230,11 @@ module.exports = {
         res.status(200).json({ message: "post saved" });
       }
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "error found" });
     }
   }),
 
-  ///report post
+  //Report post
   reportPost: asyncHandler(async (req, res) => {
     try {
       const reason = req.body.data;
@@ -314,7 +302,6 @@ module.exports = {
         res.status(200).json({ message: "updated" });
       }
     } catch (error) {
-      console.log("error", error);
       res.status(500).json({ message: "error found", error });
     }
   }),
