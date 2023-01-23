@@ -10,7 +10,7 @@ const postModel = require("../models/postModel");
 const userModel = require("../models/userModel");
 
 module.exports = {
-  ///admin login
+  //Admin Login
   adminLogin: asyncHandler(async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -52,7 +52,7 @@ module.exports = {
     }
   }),
 
-  ///get reported posts
+  // Get all reported posts
   reportedPosts: asyncHandler(async (req, res) => {
     try {
       const reportedPosts = await reportPostModel
@@ -68,7 +68,7 @@ module.exports = {
     }
   }),
 
-  ///remove reported posts
+  //Remove reported posts
   removeReportedPost: asyncHandler(async (req, res) => {
     try {
       const postId = mongoose.Types.ObjectId(req.body.postId);
@@ -88,7 +88,7 @@ module.exports = {
     }
   }),
 
-  ///declining request
+  //Declining request for reported posts
   declineReportRequest: asyncHandler(async (req, res) => {
     try {
       const postId = mongoose.Types.ObjectId(req.params.id);
@@ -100,32 +100,37 @@ module.exports = {
     }
   }),
 
-  ///get users
-  getUsers: asyncHandler(async(req, res) => {
+  //Get all users
+  getUsers: asyncHandler(async (req, res) => {
     try {
-      const users = await userModel.find()
-      res.status(200).json(users)
+      const users = await userModel.find();
+      res.status(200).json(users);
     } catch (error) {
-      res.status(500).json({message:'Error found', error})
+      res.status(500).json({ message: "Error found", error });
     }
   }),
 
-  ///user Actions
-  userAction: asyncHandler(async(req,res) => {
+  //User Management
+  userAction: asyncHandler(async (req, res) => {
     try {
-      const userId = mongoose.Types.ObjectId(req.params.id)
-      const user = await userModel.findOne({_id:userId})
-      if(!user.accessDenied){
-        const block = await userModel.updateOne({_id:userId},{accessDenied:true})
-        res.status(200).json({message:'blocked'})
-      }
-      else{
-        const block = await userModel.updateOne({_id:userId},{accessDenied:false})
-        res.status(200).json({message:'activate'})
+      const userId = mongoose.Types.ObjectId(req.params.id);
+      const user = await userModel.findOne({ _id: userId });
+      if (!user.accessDenied) {
+        const block = await userModel.updateOne(
+          { _id: userId },
+          { accessDenied: true }
+        );
+        res.status(200).json({ message: "blocked" });
+      } else {
+        const block = await userModel.updateOne(
+          { _id: userId },
+          { accessDenied: false }
+        );
+        res.status(200).json({ message: "activate" });
       }
     } catch (error) {
-      console.log(error)
-      res.status(500).json({message:'error found', error})
+      console.log(error);
+      res.status(500).json({ message: "error found", error });
     }
-  })
+  }),
 };
