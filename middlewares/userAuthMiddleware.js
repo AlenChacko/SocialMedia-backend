@@ -7,13 +7,12 @@ const verifyToken = (req, res, next) => {
   if (!token) {
     res.json({ message: "A token is required for authentication" });
     throw new Error("No token found");
-  }  else {
+  } else {
     try {
       const decoded = jwt.verify(token, config.TOKEN_KEY);
       req.user = decoded;
     } catch (error) {
-      console.log(error, "error");
-      return res.status(401).json({message:'invalid token'});
+      return res.status(401).json({ message: "invalid token" });
     }
     return next();
   }
