@@ -83,7 +83,6 @@ module.exports = {
       });
       res.status(200).json({ message: "Removed" });
     } catch (error) {
-      console.log("error", error);
       res.status(500).json({ message: "error found", error });
     }
   }),
@@ -95,7 +94,6 @@ module.exports = {
       const decline = await reportPostModel.deleteOne({ postId: postId });
       res.status(200).json({ decline, message: "Declined" });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ messsage: "error found", error });
     }
   }),
@@ -129,7 +127,6 @@ module.exports = {
         res.status(200).json({ message: "activate" });
       }
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "error found", error });
     }
   }),

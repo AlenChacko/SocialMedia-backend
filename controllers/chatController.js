@@ -3,7 +3,7 @@ const messageModel = require("../models/messageModel");
 const mongoose = require("mongoose");
 
 module.exports = {
-  ///add message for room id
+  //Add message for room id
   addMessageForRoomId: asyncHandler(async (req, res) => {
     try {
       const authorId = mongoose.Types.ObjectId(req.body.userId);
@@ -29,7 +29,7 @@ module.exports = {
     }
   }),
 
-  ///add message
+  //Add message
   addMessage: asyncHandler(async (req, res) => {
     try {
       const authorId = mongoose.Types.ObjectId(req.body.messageData.authorId);
@@ -90,7 +90,7 @@ module.exports = {
     }
   }),
 
-  ///get messages
+  //Get messages
   getChat: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.user._id);
@@ -107,7 +107,7 @@ module.exports = {
     }
   }),
 
-  ///get one chat
+  //Get one chat
   getOneChat: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.user._id);
