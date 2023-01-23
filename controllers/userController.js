@@ -5,7 +5,7 @@ const postModel = require("../models/postModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const otpHelper = require("../service/userOtpService");
-const adminModel = require("../models/adminModel");
+
 const {
   validateEmail,
   validateLength,
@@ -14,7 +14,7 @@ const {
 const mongoose = require("mongoose");
 
 module.exports = {
-  ///register user
+  //Register user
   register: asyncHandler(async (req, res) => {
     try {
       const {
@@ -29,13 +29,12 @@ module.exports = {
 
       if (!validateEmail(email)) {
         res.status(400).json({ message: "invlaid email address" });
-        // throw new Error('Invalid email address')
       }
 
       const check = await userModel.findOne({
         $or: [{ email }, { phonenumber }],
       });
-      console.log("check,check");
+
       if (check) {
         res.json({ message: "This email already exists, try another one" });
         throw new Error("Email already exists");
@@ -64,23 +63,15 @@ module.exports = {
         });
       }
     } catch (error) {
-      console.log(error);
       res.status(500).json({ messsage: "error found" });
     }
   }),
 
-  ///register user - verifying otp
+  //Register user by verifying otp
   registerOTP: asyncHandler(async (req, res) => {
     try {
-      const {
-        firstname,
-        lastname,
-        email,
-        phonenumber,
-        password,
-        gender,
-        // dateofbirth,
-      } = req.body;
+      const { firstname, lastname, email, phonenumber, password, gender } =
+        req.body;
 
       if (!validateEmail(email)) {
         res.status(400).json({ message: "invlaid email address" });
@@ -129,7 +120,7 @@ module.exports = {
             expiresIn: "24h",
           }
         );
-        ///save userToken
+        //Save userToken
         user.token = token;
         res.status(200).json({
           _id: user._id,
@@ -145,7 +136,7 @@ module.exports = {
     }
   }),
 
-  //resent otp
+  //Resent otp
   resentOtp: asyncHandler(async (req, res) => {
     try {
       otpHelper.sendOtpVerificationMail(req.body.email).then((response) => {
@@ -153,44 +144,11 @@ module.exports = {
         res.json(response);
       });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ messsage: "error found" });
     }
   }),
 
-  ///google register
-  googleRegister: asyncHandler(async (req, res) => {
-    try {
-      const email = req.body.email;
-      const firstname = req.body.given_name;
-      const lastname = req.body.family_name;
-      if (!email) {
-        res.json({ message: "missing credentials" });
-        throw new Error("missing credentials");
-      }
-      const alreadyLogged = await userModel.findOne({ email: email });
-      if (alreadyLogged) {
-        res.json({ message: "user already exists" });
-        throw new Error("user already exists");
-      }
-      const user = await userModel({
-        email,
-        firstname,
-        lastname,
-      });
-      user.save();
-      const token = jwt.sign({ _id: user._id, email }, process.env.TOKEN_KEY, {
-        expiresIn: "24h",
-      });
-      console.log(token);
-      res.status(200).json({ user, token });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ messsage: "error found" });
-    }
-  }),
-
-  ///login user
+  //Login user
   loginUser: asyncHandler(async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -223,44 +181,11 @@ module.exports = {
         throw new Error("User not found");
       }
     } catch (error) {
-      console.log(error);
       res.status(500).json({ messsage: "error found" });
     }
   }),
 
-  ///google login
-  googleLogin: asyncHandler(async (req, res) => {
-    try {
-      const email = req.body.email;
-      const user = await userModel.findOne({ email: email });
-      if (!user) {
-        res.json({ message: "you first signup" });
-        throw new Error("didnt signup yet");
-      } else {
-        const token = jwt.sign(
-          {
-            _id: user._id,
-            email,
-          },
-          process.env.TOKEN_KEY,
-          {
-            expiresIn: "24h",
-          }
-        );
-        res.status(200).json({
-          _id: user._id,
-          email: user.email,
-          firstname: user.firstname,
-          token,
-        });
-      }
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ messsage: "error found" });
-    }
-  }),
-
-  ///forgot password email verification
+  //Forgot password email verification
   forgotPasswordEmail: asyncHandler(async (req, res) => {
     try {
       const { email } = req.body;
@@ -275,9 +200,7 @@ module.exports = {
             .then((otpResponse) => {
               res.status(200).json({ otpResponse, message: "User exists" });
             })
-            .catch((error) => {
-              console.log("error", error);
-            });
+            .catch((error) => {});
         } else {
           res.json({ message: "User dosent extists " });
         }
@@ -287,7 +210,7 @@ module.exports = {
     }
   }),
 
-  ///forgot password updating password
+  //Forgot password updating password
   forgotPassword: asyncHandler(async (req, res) => {
     try {
       const { password } = req.body.values;
@@ -318,10 +241,9 @@ module.exports = {
     }
   }),
 
-  ///user details getting
+  //User details getting
   getUser: asyncHandler(async (req, res) => {
     try {
-      console.log("req.asfsdfdsfdsfdsfdsfdsf", req.user);
       const user = await userModel
         .findOne({ _id: req.user._id })
         .populate({ path: "savedPosts", populate: { path: "userId" } });
@@ -332,12 +254,10 @@ module.exports = {
         res.json({ message: "userNotFound" });
         throw new Error("User not found");
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }),
 
-  ///user Searching
+  //User Searching
   userSearch: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.headers.user);
@@ -349,21 +269,17 @@ module.exports = {
         ],
       });
 
-      //firstname: new RegExp('^' + req.params.data, 'i')
       if (searchResult) {
         res.status(200).json(searchResult);
       } else {
         res.status(400).json({ message: "No results" });
         throw new Error("No results");
       }
-    } catch (error) {
-      console.log("error", error);
-    }
+    } catch (error) {}
   }),
 
-  ///login auth
+  //Login auth
   loginAuth: asyncHandler(async (req, res) => {
-    console.log("req .user for login", req.user);
     try {
       if (req.user) {
         res.status(200).json({ status: true });
@@ -376,7 +292,7 @@ module.exports = {
     }
   }),
 
-  ///like post
+  //Like post
   postLike: asyncHandler(async (req, res) => {
     let userId = mongoose.Types.ObjectId(req.body.userid);
     let postid = mongoose.Types.ObjectId(req.body.postid);
@@ -404,7 +320,7 @@ module.exports = {
     }
   }),
 
-  ///add cover image
+  //Add cover image
   addCoverImage: asyncHandler(async (req, res) => {
     try {
       const coverimage = req.body.coverimage;
@@ -425,12 +341,11 @@ module.exports = {
         res.status(200).json(addCover);
       }
     } catch (error) {
-      console.log(error);
       res.status(200).json({ message: "error found" });
     }
   }),
 
-  ///add profile image
+  //Add profile image
   addProfileImg: asyncHandler(async (req, res) => {
     try {
       const profileimage = req.body.profileimage;
@@ -451,12 +366,11 @@ module.exports = {
         res.status(200).json(addProfile);
       }
     } catch (error) {
-      console.log(error);
       res.status(200).json({ message: "error found" });
     }
   }),
 
-  ///get all users exept loggined user and followed user
+  //Get all users exept loggined user and followed user
   allUsers: asyncHandler(async (req, res) => {
     try {
       const logginedUser = mongoose.Types.ObjectId(req.user._id);
@@ -484,11 +398,11 @@ module.exports = {
         res.json({ message: "no users found" });
       }
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "error found" });
     }
   }),
 
+  //Follow User
   addFollow: asyncHandler(async (req, res) => {
     try {
       const acceptingUser = mongoose.Types.ObjectId(req.body.id);
@@ -531,12 +445,10 @@ module.exports = {
         );
         res.status(200).json({ following, follower, message: "followed" });
       }
-    } catch (error) {
-      console.log("erroere", error);
-    }
+    } catch (error) {}
   }),
 
-  ///remove followers
+  //Remove followers
   removeFollowers: asyncHandler(async (req, res) => {
     try {
       const logginedUser = mongoose.Types.ObjectId(req.user._id);
@@ -558,12 +470,10 @@ module.exports = {
         }
       );
       res.status(200).json(removeResult);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }),
 
-  ///update user
+  //Update user
   updateUser: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.body.userDetails._id);
@@ -604,12 +514,11 @@ module.exports = {
         res.status(200).json(updateUser);
       }
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "error found" });
     }
   }),
 
-  ///data for user profile
+  //Data for user profile
   userProfile: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.params.id);
@@ -619,17 +528,16 @@ module.exports = {
         .populate("following");
       res.status(200).json(profileData);
     } catch (error) {
-      console.log("error", error);
       res.status(500).json({ message: "error found" });
     }
   }),
 
-  ///check working
+  //Check working
   working: (req, res) => {
     res.send("its here");
   },
 
-  ///check old password for editing
+  //Check old password for editing
   checkOldPassword: asyncHandler(async (req, res) => {
     try {
       const userId = mongoose.Types.ObjectId(req.params.id);
@@ -655,7 +563,7 @@ module.exports = {
     }
   }),
 
-  ///edit password
+  //Edit password
   editPassword: asyncHandler(async (req, res) => {
     try {
       const { newPassword, oldPassword } = req.body;
